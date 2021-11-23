@@ -1,0 +1,14 @@
+server:
+  port: 5050
+  servlet:
+    context-path: /v1
+
+spring:
+  application:
+    name: file-uploader
+
+  servlet:
+    multipart:
+      max-file-size: 256MB
+      max-request-size: 256MB
+      enabled: true
