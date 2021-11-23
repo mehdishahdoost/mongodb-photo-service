@@ -29,7 +29,7 @@ class PhotoRepositoryTest {
 
     @Container
     private static MongoDBContainer mongoDBContainer = new MongoDBContainer(
-            DockerImageName.parse("m.docker-registry.ir/mongo").asCompatibleSubstituteFor("mongo"));
+            DockerImageName.parse("pskvo/mongo").asCompatibleSubstituteFor("mongo"));
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry propertyRegistry)
