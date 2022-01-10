@@ -1,6 +1,8 @@
 package com.ra.springframework.mongo.ctrl;
 
 import com.ra.springframework.mongo.domain.Photo;
+import com.ra.springframework.mongo.domain.dto.PhotoDto;
+import com.ra.springframework.mongo.mapper.PhotoMapper;
 import com.ra.springframework.mongo.service.PhotoService;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
@@ -32,6 +34,8 @@ class PhotoControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private PhotoMapper photoMapper;
 
     @Test
     @DisplayName("POST /photo/add - Successfully Added")
@@ -41,7 +45,8 @@ class PhotoControllerTest {
                 .id("01")
                 .title("das Schneeglöckchen")
                 .fileContent(new Binary(BsonBinarySubType.BINARY , new byte[1])).build();
-        Mockito.doReturn(mockPhoto).when(this.photoService).add(Mockito.any());
+        PhotoDto photoDto = photoMapper.toPhotoDto(mockPhoto);
+        Mockito.doReturn(photoDto).when(this.photoService).add(Mockito.any());
 
         //create file to upload
         MockMultipartFile multipartFile = new MockMultipartFile("image" , "snowdrop.gif" ,

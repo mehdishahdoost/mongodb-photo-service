@@ -29,86 +29,77 @@ class PhotoRepositoryTest {
 
     @Container
     private static MongoDBContainer mongoDBContainer = new MongoDBContainer(
-            DockerImageName.parse("pskvo/mongo").asCompatibleSubstituteFor("mongo"));
-
-    @DynamicPropertySource
-    static void setProperties(DynamicPropertyRegistry propertyRegistry)
-    {
-        propertyRegistry.add("spring.data.mongodb.uri" , mongoDBContainer::getReplicaSetUrl);
-    }
-
+            DockerImageName.parse("mongo:4.0.10"));
     @Autowired
     private MongoTemplate mongoTemplate;
-
     @Autowired
     private PhotoRepository photoRepository;
 
+    @DynamicPropertySource
+    static void setProperties(DynamicPropertyRegistry propertyRegistry) {
+        propertyRegistry.add("spring.data.mongodb.uri", mongoDBContainer::getReplicaSetUrl);
+    }
+
     @BeforeEach
-    void beforeEach() throws Exception
-    {
+    void beforeEach() throws Exception {
         //Save photo
-        Photo mockPhoto1 = new Photo("01" , "die Orchidee" , new Binary(BsonBinarySubType.BINARY , new byte[1]));
-        Photo mockPhoto2 = new Photo("02" , "das Veilchen" , new Binary(BsonBinarySubType.BINARY , new byte[1]));
+        Photo mockPhoto1 = new Photo("01", "die Orchidee", new Binary(BsonBinarySubType.BINARY, new byte[1]));
+        Photo mockPhoto2 = new Photo("02", "das Veilchen", new Binary(BsonBinarySubType.BINARY, new byte[1]));
         this.mongoTemplate.save(mockPhoto1);
         this.mongoTemplate.save(mockPhoto2);
     }
+
     @AfterEach
-    void afterEach()
-    {
+    void afterEach() {
         //Drop the collection
         this.mongoTemplate.dropCollection("photo");
     }
 
     @Test
     @DisplayName("Find All - Success")
-    void testFindAllThenSuccess()
-    {
+    void testFindAllThenSuccess() {
         List<Photo> photoList = this.photoRepository.findAll();
         assertNotNull(photoList);
-        assertEquals(2 , photoList.size());
+        assertEquals(2, photoList.size());
     }
 
     @Test
     @DisplayName("Final By Id - Successfully Found")
-    void testFindByIdSuccess()
-    {
+    void testFindByIdSuccess() {
         Optional<Photo> actualPhoto = this.photoRepository.findById("01");
-        assertTrue(actualPhoto.isPresent() , "There should be a photo for ID 01");
-        actualPhoto.ifPresent( photo -> {
-            assertEquals("01" , photo.getId());
-            assertEquals("die Orchidee" , photo.getTitle());
-            assertEquals(BsonBinarySubType.BINARY.getValue() , photo.getFileContent().getType());
+        assertTrue(actualPhoto.isPresent(), "There should be a photo for ID 01");
+        actualPhoto.ifPresent(photo -> {
+            assertEquals("01", photo.getId());
+            assertEquals("die Orchidee", photo.getTitle());
+            assertEquals(BsonBinarySubType.BINARY.getValue(), photo.getFileContent().getType());
         });
     }
 
     @Test
     @DisplayName("Final By Id - Not Found")
-    void testFindByIdFailure()
-    {
+    void testFindByIdFailure() {
         Optional<Photo> actualPhoto = this.photoRepository.findById("25");
-        assertFalse(actualPhoto.isPresent() , "There should not find a photo for ID 25");
+        assertFalse(actualPhoto.isPresent(), "There should not find a photo for ID 25");
     }
 
     @Test
     @DisplayName("Save Photo - Success")
-    void testSaveSuccess()
-    {
+    void testSaveSuccess() {
         //Create a mock Photo and save to database
-        Photo mockPhoto = new Photo("04" , "das Schneeglöckchen" , new Binary(BsonBinarySubType.BINARY , new byte[1]));
+        Photo mockPhoto = new Photo("04", "das Schneeglöckchen", new Binary(BsonBinarySubType.BINARY, new byte[1]));
         Photo savedPhoto = this.photoRepository.save(mockPhoto);
         //Retrieve the Photo
         Optional<Photo> actualPhoto = this.photoRepository.findById("04");
         //Validation
-        assertTrue(actualPhoto.isPresent() , "There should be a photo for ID 04");
-        actualPhoto.ifPresent( photo -> {
-            assertEquals("04" , photo.getId() , "Photo id should be 01");
-            assertEquals("das Schneeglöckchen" , photo.getTitle() , "Photo title should be das Schneeglöckchen");
-            assertEquals(BsonBinarySubType.BINARY.getValue() , photo.getFileContent().getType());
+        assertTrue(actualPhoto.isPresent(), "There should be a photo for ID 04");
+        actualPhoto.ifPresent(photo -> {
+            assertEquals("04", photo.getId(), "Photo id should be 01");
+            assertEquals("das Schneeglöckchen", photo.getTitle(), "Photo title should be das Schneeglöckchen");
+            assertEquals(BsonBinarySubType.BINARY.getValue(), photo.getFileContent().getType());
         });
 
 
     }
-
 
 
 }

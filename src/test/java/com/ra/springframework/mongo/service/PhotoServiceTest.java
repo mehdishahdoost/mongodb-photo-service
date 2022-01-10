@@ -2,6 +2,7 @@ package com.ra.springframework.mongo.service;
 
 import com.ra.springframework.mongo.db.PhotoRepository;
 import com.ra.springframework.mongo.domain.Photo;
+import com.ra.springframework.mongo.domain.dto.PhotoDto;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.junit.jupiter.api.DisplayName;
@@ -70,7 +71,7 @@ class PhotoServiceTest {
         Mockito.doReturn(mockPhoto).when(this.photoRepository).save(Mockito.any());
 
         //Execute the service call
-        Photo actualPhoto = this.photoService.add(mockPhoto);
+        PhotoDto actualPhoto = this.photoService.add(mockPhoto);
 
         //Assert the response
         assertEquals("die Orchidee" , actualPhoto.getTitle() , "The title for the actual photo should be gifPhoto");

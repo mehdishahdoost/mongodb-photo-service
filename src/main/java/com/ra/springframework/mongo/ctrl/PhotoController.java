@@ -1,6 +1,7 @@
 package com.ra.springframework.mongo.ctrl;
 
 import com.ra.springframework.mongo.domain.Photo;
+import com.ra.springframework.mongo.domain.dto.PhotoDto;
 import com.ra.springframework.mongo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
 import org.bson.BsonBinarySubType;
@@ -26,11 +27,11 @@ public class PhotoController {
     private final PhotoService photoService;
 
     @PostMapping(value = "/add" , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Photo> addPhoto(@RequestParam("title") String title, @RequestParam("image") MultipartFile file) throws IOException
+    public ResponseEntity<PhotoDto> addPhoto(@RequestParam("title") String title, @RequestParam("image") MultipartFile file) throws IOException
     {
         //Create and add new photo
         Photo postPhoto = Photo.builder().title(title).fileContent(new Binary(BsonBinarySubType.BINARY,file.getBytes())).build();
-        Photo photo = this.photoService.add(postPhoto);
+        PhotoDto photo = this.photoService.add(postPhoto);
         try {
             return ResponseEntity
                     .created(new URI("/photo/" + photo.getId()))
