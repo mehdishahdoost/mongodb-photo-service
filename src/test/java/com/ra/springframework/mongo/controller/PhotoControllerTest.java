@@ -1,4 +1,4 @@
-package com.ra.springframework.mongo.ctrl;
+package com.ra.springframework.mongo.controller;
 
 import com.ra.springframework.mongo.domain.Photo;
 import com.ra.springframework.mongo.domain.dto.PhotoDto;

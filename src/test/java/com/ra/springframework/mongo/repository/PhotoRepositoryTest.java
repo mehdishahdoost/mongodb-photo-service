@@ -1,4 +1,4 @@
-package com.ra.springframework.mongo.db;
+package com.ra.springframework.mongo.repository;
 
 import com.ra.springframework.mongo.domain.Photo;
 import org.bson.BsonBinarySubType;

@@ -1,12 +1,9 @@
 package com.ra.springframework.mongo.service;
 
-import com.ra.springframework.mongo.db.PhotoRepository;
+import com.ra.springframework.mongo.repository.PhotoRepository;
 import com.ra.springframework.mongo.domain.Photo;
 import com.ra.springframework.mongo.domain.dto.PhotoDto;
 import com.ra.springframework.mongo.mapper.PhotoMapper;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

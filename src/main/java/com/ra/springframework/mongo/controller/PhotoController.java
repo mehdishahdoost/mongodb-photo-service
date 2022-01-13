@@ -1,9 +1,10 @@
-package com.ra.springframework.mongo.ctrl;
+package com.ra.springframework.mongo.controller;
 
 import com.ra.springframework.mongo.domain.Photo;
 import com.ra.springframework.mongo.domain.dto.PhotoDto;
 import com.ra.springframework.mongo.service.PhotoService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonBinarySubType;
 import org.bson.types.Binary;
 import org.springframework.data.rest.webmvc.BasePathAwareController;
@@ -22,29 +23,28 @@ import java.util.List;
 @RequestMapping("/photo")
 @BasePathAwareController
 @RequiredArgsConstructor
+@Slf4j
 public class PhotoController {
 
     private final PhotoService photoService;
 
-    @PostMapping(value = "/add" , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PhotoDto> addPhoto(@RequestParam("title") String title, @RequestParam("image") MultipartFile file) throws IOException
-    {
-        //Create and add new photo
-        Photo postPhoto = Photo.builder().title(title).fileContent(new Binary(BsonBinarySubType.BINARY,file.getBytes())).build();
+    @PostMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PhotoDto> addPhoto(@RequestParam("title") String title,
+                                             @RequestParam("image") MultipartFile file) throws IOException {
+        log.info("Add new image title: " + title);
+        Photo postPhoto = Photo.builder().title(title).fileContent(new Binary(BsonBinarySubType.BINARY, file.getBytes())).build();
         PhotoDto photo = this.photoService.add(postPhoto);
         try {
             return ResponseEntity
                     .created(new URI("/photo/" + photo.getId()))
                     .body(photo);
-        }catch (URISyntaxException exception)
-        {
+        } catch (URISyntaxException exception) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping(value = "/" , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> findAll()
-    {
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> findAll() {
         List<Photo> photoList = this.photoService.getAll();
         if (!photoList.isEmpty()) {
             try {
@@ -52,22 +52,18 @@ public class PhotoController {
             } catch (URISyntaxException exception) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
-        }
-        else
+        } else
             return ResponseEntity.noContent().build();
     }
 
-    @GetMapping(value = "/{id}" , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> findById(@PathVariable String id)
-    {
+    @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> findById(@PathVariable String id) {
         return this.photoService.getById(id)
                 .map(photo ->
                 {
-                    try
-                    {
+                    try {
                         return ResponseEntity.ok().location(new URI("/photo/" + photo.getId())).body(photo);
-                    }catch(URISyntaxException exception)
-                    {
+                    } catch (URISyntaxException exception) {
                         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
                     }
                 }).orElse(ResponseEntity.notFound().build());
